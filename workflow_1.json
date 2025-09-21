@@ -1,0 +1,1525 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -816,
+        560
+      ],
+      "id": "843ff4aa-b49b-4ee1-bdbc-52cb3614143b",
+      "name": "Telegram Trigger",
+      "webhookId": "26862eda-b561-4e04-b51c-51a5f61a0269",
+      "credentials": {
+        "telegramApi": {
+          "id": "qDEHZJOsS8hV52RK",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Message: {{ $('Merge').item.json.message }}\ndescription {{ $json.data }}\n\n# BottleMaster Pro 3000 - Production Line Monitor\n\nYou are an industrial monitoring assistant for the BottleMaster Pro 3000 automated beverage bottling line. Provide direct, technical responses about production data.\n\n## Production Line Sensor Map:\n- **x0:** Conveyor Speed (m/min) - Main belt speed control\n- **x1:** Fill Tank Temperature (°C) - Product temperature during filling  \n- **x2:** Hydraulic Pressure (Bar) - Powers capping & filling systems\n- **x3:** Air Pressure (PSI) - Pneumatic systems & bottle handling\n- **x4:** Fill Accuracy (%) - Volumetric filling precision vs target\n- **x5:** Line Efficiency (%) - Overall Equipment Effectiveness (OEE)\n- **x6:** Cap Torque (Nm) - Bottle sealing force measurement\n- **x7:** Power Usage (kW) - Total electrical consumption\n- **x8:** Light Level (%) - Vision system inspection lighting\n- **x9:** Vibration (mm/s) - Machine health monitoring\n\n## Data Mapping Instructions:\n**CRITICAL: Always read data from Google Sheets columns d0-d9, but display output using factory convention x0-x9**\n- Sheet Column d0 → Display as x0\n- Sheet Column d1 → Display as x1\n- Sheet Column d2 → Display as x2\n- Sheet Column d3 → Display as x3\n- Sheet Column d4 → Display as x4\n- Sheet Column d5 → Display as x5\n- Sheet Column d6 → Display as x6\n- Sheet Column d7 → Display as x7\n- Sheet Column d8 → Display as x8\n- Sheet Column d9 → Display as x9\n\n## Response Instructions:\n1. **Use Google Sheets tool automatically** - Get ALL production data\n2. **Find requested timestamp or closest match**\n3. **Provide industrial context when relevant**\n4. **Keep responses under 4 lines maximum**\n5. **Include operational status assessment**\n\n## Response Formats:\n\n**For timestamp queries:**\n```\nProduction Data [timestamp] - Line Status: [NORMAL/WARNING/CRITICAL]\nSpeed: x0=[value]m/min | Temp: x1=[value]°C | Hydraulic: x2=[value]Bar | Air: x3=[value]PSI | Accuracy: x4=[value]%\nEfficiency: x5=[value]% | Torque: x6=[value]Nm | Power: x7=[value]kW | Light: x8=[value]% | Vibration: x9=[value]mm/s\n```\n\n**For operational status queries:**\n```\nLine Status: [Assessment based on values]\nCritical Parameters: [Any values outside normal ranges using x0-x9]\nProduction Rate: [Calculated from speed/efficiency]\n```\n\n**For trend/search queries:**\n```\nFound [X] records matching criteria:\n[Timestamp]: Key readings - Status: [NORMAL/WARNING/CRITICAL]\n[Show max 3 results with most relevant parameters using x0-x9]\n```\n\n## Operational Status Assessment:\n- **NORMAL:** All parameters within optimal ranges\n- **WARNING:** 1-2 parameters approaching limits  \n- **CRITICAL:** Any parameter exceeding safe limits\n\n## Critical Parameter Ranges (for x0-x9 assessment):\n- x0 Conveyor: 60-90 m/min (normal)\n- x1 Temperature: 2-6°C (optimal)\n- x2 Hydraulic: 150-180 Bar (normal)\n- x3 Air Pressure: 90-110 PSI (optimal)\n- x4 Fill Accuracy: 98-102% (acceptable)\n- x5 Line Efficiency: 80%+ (good)\n- x6 Cap Torque: 15-20 Nm (proper)\n- x7 Power: 200-350 kW (normal production)\n- x8 Light Level: 70-90% (optimal)\n- x9 Vibration: <8 mm/s (normal)\n\n## Search Operations:\n- Production efficiency analysis\n- Parameter trending over time periods\n- Critical event identification\n- Shift performance comparisons\n- Equipment health assessments\n\n## Key Rules:\n- Always retrieve complete dataset first\n- Read data from sheet columns d0-d9 but display as x0-x9\n- Assess operational status with every response\n- Flag any critical parameters immediately  \n- Provide production context for readings\n- Maximum 4 lines per response\n- Use technical terminology appropriate for operators",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        1232
+      ],
+      "id": "b228b04e-3ad3-4f14-85af-3ef09f30deeb",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1984,
+        1328
+      ],
+      "id": "de4d01fa-a4ae-47fb-9f72-ecfb57103fb1",
+      "name": "Send a text message",
+      "webhookId": "f9cd75cd-82b4-4df2-81de-90c0d98e6a94",
+      "credentials": {
+        "telegramApi": {
+          "id": "qDEHZJOsS8hV52RK",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1040,
+        368
+      ],
+      "id": "d7e41a81-cd72-43c9-b268-6f8205b90216",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fVvjoj4cPwWlTfiJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c22b8dce-fdc1-46ff-9093-2d351fb052fa",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "swaraj shinde <ssshinde59137@gmail.com>",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -816,
+        368
+      ],
+      "id": "e6b529e9-cb63-4351-b741-115875790a23",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Smart Natural Language Processor for Vehicle System Control\nconst allInputs = $input.all();\n\nconsole.log('=== SMART NLP PROCESSOR START ===');\nconsole.log('Total inputs received:', allInputs.length);\n\n// Component mapping for natural language processing\nconst COMPONENT_MAPPING = {\n  // Motors (y0-y7)\n  'main drive motor': 'y0',\n  'main drive': 'y0',\n  'drive motor': 'y0',\n  'engine': 'y0',\n  'motor': 'y0',\n  \n  'steering motor': 'y1',\n  'steering': 'y1',\n  'direction': 'y1',\n  \n  'brake motor': 'y2',\n  'brake': 'y2',\n  'brakes': 'y2',\n  'emergency brake': 'y2',\n  \n  'transmission motor': 'y3',\n  'transmission': 'y3',\n  'gear': 'y3',\n  'gears': 'y3',\n  \n  'cooling fan motor': 'y4',\n  'cooling fan': 'y4',\n  'cooling': 'y4',\n  'fan': 'y4',\n  \n  'fuel pump motor': 'y5',\n  'fuel pump': 'y5',\n  'pump': 'y5',\n  \n  'air conditioning motor': 'y6',\n  'air conditioning': 'y6',\n  'ac': 'y6',\n  'climate': 'y6',\n  \n  'power steering motor': 'y7',\n  'power steering': 'y7',\n  'assisted steering': 'y7',\n  \n  // Sensors (d0-d9)\n  'speed sensor': 'd0',\n  'speed': 'd0',\n  'velocity': 'd0',\n  \n  'temperature sensor': 'd1',\n  'temperature': 'd1',\n  'temp': 'd1',\n  \n  'fuel level sensor': 'd2',\n  'fuel level': 'd2',\n  'fuel': 'd2',\n  'tank': 'd2',\n  \n  'brake pressure sensor': 'd3',\n  'brake pressure': 'd3',\n  'pressure': 'd3',\n  \n  'steering angle sensor': 'd4',\n  'steering angle': 'd4',\n  'wheel position': 'd4',\n  \n  'throttle position sensor': 'd5',\n  'throttle': 'd5',\n  'accelerator': 'd5',\n  'gas': 'd5',\n  \n  'oil pressure sensor': 'd6',\n  'oil pressure': 'd6',\n  'oil': 'd6',\n  \n  'battery voltage sensor': 'd7',\n  'battery': 'd7',\n  'voltage': 'd7',\n  \n  'ambient light sensor': 'd8',\n  'light sensor': 'd8',\n  'light': 'd8',\n  \n  'proximity sensor': 'd9',\n  'proximity': 'd9',\n  'obstacle': 'd9'\n};\n\n// Action keywords\nconst ACTION_KEYWORDS = {\n  ON: ['turned on', 'activated', 'enabled', 'started', 'switched on', 'on'],\n  OFF: ['turned off', 'deactivated', 'disabled', 'stopped', 'switched off', 'off'],\n  SET: ['set to', 'adjusted to', 'changed to', 'set at', 'configured to']\n};\n\n// Extract inputs from different sources\nfunction extractInputs() {\n  try {\n    let aiResponse = null;\n    let csvData = null;\n    let descriptionData = null;\n\n    for (const input of allInputs) {\n      if (input.json && input.json.output) {\n        aiResponse = input.json.output;\n        console.log('Found AI response:', aiResponse);\n      } else if (input.json && input.json.data) {\n        if (typeof input.json.data === 'string' && input.json.data.includes('Motor')) {\n          descriptionData = input.json.data;\n          console.log('Found description data');\n        } else {\n          csvData = input.json;\n          console.log('Found CSV data');\n        }\n      } else if (input.json && (input.json.hasOwnProperty('y0') || input.json.hasOwnProperty('d0'))) {\n        csvData = input.json;\n        console.log('Found CSV data with motor/sensor fields');\n      }\n    }\n\n    return { aiResponse, csvData, descriptionData };\n  } catch (error) {\n    throw new Error(`Input extraction failed: ${error.message}`);\n  }\n}\n\n// Parse natural language AI response to extract component changes\nfunction parseNaturalLanguage(text) {\n  try {\n    const textLower = text.toLowerCase();\n    const changes = [];\n    \n    console.log('Parsing natural language:', text);\n    \n    // Look for each component mentioned in the text\n    for (const [componentName, fieldCode] of Object.entries(COMPONENT_MAPPING)) {\n      if (textLower.includes(componentName)) {\n        console.log(`Found component: ${componentName} (${fieldCode})`);\n        \n        // Determine the action and value\n        let value = null;\n        let action = null;\n        \n        // Check for SET actions with numeric values first\n        for (const setKeyword of ACTION_KEYWORDS.SET) {\n          const setRegex = new RegExp(`${componentName}.*${setKeyword}\\\\s*(\\\\d+)`, 'i');\n          const setMatch = textLower.match(setRegex);\n          if (setMatch) {\n            value = parseInt(setMatch[1]);\n            action = 'SET';\n            console.log(`Found SET action: ${componentName} set to ${value}`);\n            break;\n          }\n        }\n        \n        // If no SET action found, check for ON/OFF actions\n        if (value === null) {\n          // Check for ON actions\n          for (const onKeyword of ACTION_KEYWORDS.ON) {\n            if (textLower.includes(onKeyword) && textLower.includes(componentName)) {\n              value = 1;\n              action = 'ON';\n              console.log(`Found ON action: ${componentName}`);\n              break;\n            }\n          }\n          \n          // Check for OFF actions\n          if (value === null) {\n            for (const offKeyword of ACTION_KEYWORDS.OFF) {\n              if (textLower.includes(offKeyword) && textLower.includes(componentName)) {\n                value = 0;\n                action = 'OFF';\n                console.log(`Found OFF action: ${componentName}`);\n                break;\n              }\n            }\n          }\n        }\n        \n        // If we found a valid action, add it to changes\n        if (value !== null) {\n          changes.push({\n            component: componentName,\n            field: fieldCode,\n            value: value,\n            action: action\n          });\n        }\n      }\n    }\n    \n    // Also look for percentage values (e.g., \"75%\", \"50 percent\")\n    const percentageRegex = /(\\d+)(?:%|(?:\\s*percent))/gi;\n    let percentMatch;\n    while ((percentMatch = percentageRegex.exec(textLower)) !== null) {\n      const percentValue = parseInt(percentMatch[1]);\n      console.log(`Found percentage value: ${percentValue}%`);\n      \n      // Try to match this percentage to a sensor mentioned in the text\n      for (const [componentName, fieldCode] of Object.entries(COMPONENT_MAPPING)) {\n        if (fieldCode.startsWith('d') && textLower.includes(componentName)) {\n          // Check if this sensor doesn't already have a value assigned\n          const existingChange = changes.find(c => c.field === fieldCode);\n          if (!existingChange) {\n            changes.push({\n              component: componentName,\n              field: fieldCode,\n              value: percentValue,\n              action: 'SET'\n            });\n            console.log(`Assigned percentage ${percentValue}% to ${componentName}`);\n            break;\n          }\n        }\n      }\n    }\n    \n    console.log('Extracted changes:', changes);\n    return { changes, success: changes.length > 0 };\n  } catch (error) {\n    console.log('Error parsing natural language:', error.message);\n    return { changes: [], success: false, error: error.message };\n  }\n}\n\n// Apply changes to CSV data\nfunction applyChangesToCSV(csvRow, changes) {\n  const appliedChanges = [];\n  const errors = [];\n\n  console.log('Current CSV state:', csvRow);\n  console.log('Applying changes:', changes);\n\n  changes.forEach((change, index) => {\n    try {\n      const { field, value, component, action } = change;\n      \n      if (!csvRow.hasOwnProperty(field)) {\n        const error = `Field '${field}' not found in CSV`;\n        errors.push(error);\n        console.log('ERROR:', error);\n        return;\n      }\n      \n      const oldValue = csvRow[field];\n      const newValue = Number(value);\n      \n      if (isNaN(newValue)) {\n        const error = `Invalid value for ${field}: ${value}`;\n        errors.push(error);\n        console.log('ERROR:', error);\n        return;\n      }\n      \n      // Apply the change\n      csvRow[field] = newValue;\n      \n      appliedChanges.push({\n        component: component,\n        field: field,\n        oldValue: oldValue,\n        newValue: newValue,\n        action: action\n      });\n      \n      console.log(`SUCCESS: ${component} (${field}) changed from ${oldValue} to ${newValue}`);\n      \n    } catch (error) {\n      const errorMsg = `Failed to apply change for ${change.component}: ${error.message}`;\n      errors.push(errorMsg);\n      console.log('ERROR:', errorMsg);\n    }\n  });\n\n  return {\n    appliedChanges,\n    errors,\n    success: errors.length === 0 && appliedChanges.length > 0\n  };\n}\n\n// MAIN EXECUTION\ntry {\n  console.log('=== STARTING NATURAL LANGUAGE PROCESSING ===');\n  \n  // Step 1: Extract inputs\n  const { aiResponse, csvData, descriptionData } = extractInputs();\n  \n  if (!aiResponse) {\n    console.log('No AI response found, passing through');\n    return { \n      json: { \n        message: 'No AI response to process', \n        passThrough: true,\n        timestamp: new Date().toISOString()\n      } \n    };\n  }\n\n  // Step 2: Initialize CSV row with defaults\n  let csvRow = {\n    y0: 0, y1: 0, y2: 0, y3: 0, y4: 0, y5: 0, y6: 0, y7: 0,\n    d0: 0, d1: 0, d2: 0, d3: 0, d4: 0, d5: 0, d6: 0, d7: 0, d8: 0, d9: 0\n  };\n\n  // Load existing CSV data if available\n  if (csvData) {\n    Object.keys(csvRow).forEach(key => {\n      if (csvData.hasOwnProperty(key)) {\n        const value = csvData[key];\n        if (typeof value === 'number' || (typeof value === 'string' && !isNaN(Number(value)))) {\n          csvRow[key] = Number(value);\n        }\n      }\n    });\n    console.log('Loaded existing CSV state:', csvRow);\n  }\n\n  // Step 3: Parse the natural language AI response\n  const parseResult = parseNaturalLanguage(aiResponse);\n\n  if (!parseResult.success) {\n    console.log('No valid changes found in AI response');\n    return { \n      json: { \n        message: aiResponse,\n        passThrough: true,\n        parseError: parseResult.error,\n        timestamp: new Date().toISOString()\n      } \n    };\n  }\n\n  // Step 4: Apply changes to CSV\n  const updateResult = applyChangesToCSV(csvRow, parseResult.changes);\n  \n  if (!updateResult.success) {\n    console.log('Failed to apply changes:', updateResult.errors);\n    return {\n      json: {\n        message: aiResponse,\n        error: updateResult.errors.join('; '),\n        timestamp: new Date().toISOString(),\n        updateFailed: true,\n        // Include original CSV data for safety\n        ...csvRow\n      }\n    };\n  }\n\n  // Step 5: Success - return updated CSV data\n  console.log('All changes applied successfully!');\n  console.log('Final CSV state:', csvRow);\n  console.log('Applied changes:', updateResult.appliedChanges);\n\n  // Return clean CSV data (metadata will be filtered out by Convert to File)\n  return { \n    json: {\n      ...csvRow,\n      // Metadata for logging (will be filtered out)\n      _aiResponse: aiResponse,\n      _changesApplied: updateResult.appliedChanges.length,\n      _timestamp: new Date().toISOString(),\n      _success: true\n    }\n  };\n\n} catch (globalError) {\n  console.log('=== CRITICAL ERROR ===');\n  console.log('Global error:', globalError.message);\n  \n  return {\n    json: {\n      error: true,\n      message: `Processing failed: ${globalError.message}`,\n      timestamp: new Date().toISOString(),\n      criticalError: true\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2496,
+        848
+      ],
+      "id": "82686340-17df-45bf-82c5-d9d87d0fe330",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6249e2ae-befd-4938-be8c-b615bba5385d",
+              "name": "triggerSource",
+              "value": "telegram",
+              "type": "string"
+            },
+            {
+              "id": "a2b0e3da-2c35-45c7-899d-f4b745a52309",
+              "name": "chatId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "450d0da8-1699-4d2d-b081-2bdf0e3cb386",
+              "name": "message",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "f3ca601f-8e93-4d0e-8a84-08654e8b33ab",
+              "name": "userName",
+              "value": "={{ $json.message.from.first_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -592,
+        560
+      ],
+      "id": "8b23bfff-37fd-418d-837b-a1bfb0177893",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dceb8d63-f302-433d-bf44-c79442af1a60",
+              "name": "triggerSource",
+              "value": "gmail",
+              "type": "string"
+            },
+            {
+              "id": "bd61cb3b-21a9-4a47-966b-f18def1ca739",
+              "name": "email",
+              "value": "={{ $json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "8284b4f9-97e1-4615-9a36-94fd22499789",
+              "name": "message",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "1b04ad83-39f4-4a5d-9547-ecaf92031a6d",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -592,
+        368
+      ],
+      "id": "b58474e6-3e41-44f1-9bbe-1936e8bf5e57",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <style>\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            line-height: 1.6;\n            color: #333;\n            background: white;\n            padding: 20px;\n        }\n        .header {\n            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n            color: white;\n            padding: 40px 30px;\n            text-align: center;\n            border-radius: 10px 10px 0 0;\n            margin: -20px -20px 0 -20px;\n        }\n        .header h1 {\n            font-size: 2.2em;\n            margin-bottom: 10px;\n            font-weight: 300;\n        }\n        .header p {\n            font-size: 1em;\n            opacity: 0.9;\n        }\n        .report-info {\n            background: #f8f9fa;\n            padding: 20px 30px;\n            border-left: 4px solid #667eea;\n            margin: 0 -20px;\n        }\n        .report-info table {\n            width: 100%;\n            border-collapse: collapse;\n        }\n        .report-info td {\n            padding: 8px 0;\n        }\n        .report-info td:first-child {\n            font-weight: bold;\n            width: 150px;\n            color: #555;\n        }\n        .content {\n            padding: 30px 0;\n        }\n        .summary-cards {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n            gap: 20px;\n            margin-bottom: 30px;\n        }\n        .card {\n            background: white;\n            border: 1px solid #e0e0e0;\n            border-radius: 8px;\n            padding: 20px;\n            text-align: center;\n            box-shadow: 0 2px 4px rgba(0,0,0,0.1);\n            transition: transform 0.2s;\n        }\n        .card:hover {\n            transform: translateY(-2px);\n            box-shadow: 0 4px 8px rgba(0,0,0,0.15);\n        }\n        .card-value {\n            font-size: 2em;\n            font-weight: bold;\n            color: #667eea;\n            margin-bottom: 5px;\n        }\n        .card-label {\n            color: #666;\n            font-size: 0.9em;\n            text-transform: uppercase;\n            letter-spacing: 0.5px;\n        }\n        .data-section {\n            margin-top: 30px;\n        }\n        .section-title {\n            font-size: 1.5em;\n            color: #2c3e50;\n            margin-bottom: 15px;\n            padding-bottom: 10px;\n            border-bottom: 2px solid #667eea;\n        }\n        table.data-table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n            box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n            border-radius: 8px;\n            overflow: hidden;\n        }\n        table.data-table thead {\n            background: #2c3e50;\n            color: white;\n        }\n        table.data-table th {\n            padding: 12px;\n            text-align: left;\n            font-weight: 600;\n            font-size: 0.95em;\n            text-transform: uppercase;\n            letter-spacing: 0.5px;\n        }\n        table.data-table td {\n            padding: 12px;\n            border-bottom: 1px solid #e0e0e0;\n        }\n        table.data-table tr:nth-child(even) {\n            background: #f8f9fa;\n        }\n        table.data-table tr:hover {\n            background: #e8f4ff;\n        }\n        table.data-table tr:last-child td {\n            border-bottom: none;\n        }\n        .no-data {\n            text-align: center;\n            padding: 40px;\n            color: #999;\n            font-size: 1.2em;\n            background: #f8f9fa;\n            border-radius: 8px;\n            margin: 20px 0;\n        }\n        .footer {\n            margin-top: 40px;\n            padding: 20px;\n            border-top: 2px solid #e0e0e0;\n            text-align: center;\n            color: #666;\n            font-size: 0.85em;\n            line-height: 1.8;\n        }\n        @media print {\n            body {\n                margin: 0;\n                padding: 0;\n            }\n            .header {\n                -webkit-print-color-adjust: exact;\n                print-color-adjust: exact;\n            }\n            .card:hover {\n                transform: none;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"header\">\n        <h1>{{ $json.reportTitle ? $json.reportTitle : \"Data Report\" }}</h1>\n        <p>{{ $json.reportSubtitle ? $json.reportSubtitle : \"Automated Report Generation\" }}</p>\n        <p>Generated on {{ new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) }}</p>\n    </div>\n    \n    <div class=\"report-info\">\n        <table>\n            <tr>\n                <td>Report ID:</td>\n                <td>{{ \"RPT-\" + Math.floor(Date.now() / 1000) }}</td>\n            </tr>\n            <tr>\n                <td>Requested By:</td>\n                <td>{{ $json.userName ? $json.userName : ($json.email ? $json.email : ($json.triggerSource === 'telegram' ? 'Telegram User' : 'System User')) }}</td>\n            </tr>\n            <tr>\n                <td>Source:</td>\n                <td>{{ $json.triggerSource ? $json.triggerSource.charAt(0).toUpperCase() + $json.triggerSource.slice(1) : 'System' }}</td>\n            </tr>\n            <tr>\n                <td>Total Records:</td>\n                <td>{{ Array.isArray($json.sheetData) ? $json.sheetData.length : (Array.isArray($json.data) ? $json.data.length : (Array.isArray($json) ? $json.length : 0)) }}</td>\n            </tr>\n        </table>\n    </div>\n    \n    <div class=\"content\">\n        <!-- Summary Cards -->\n        <div class=\"summary-cards\">\n            <div class=\"card\">\n                <div class=\"card-value\">\n                    {{ Array.isArray($json.sheetData) ? $json.sheetData.length : (Array.isArray($json.data) ? $json.data.length : (Array.isArray($json) ? $json.length : 0)) }}\n                </div>\n                <div class=\"card-label\">Total Entries</div>\n            </div>\n            <div class=\"card\">\n                <div class=\"card-value\">\n                    {{ \n                        (function() {\n                            let data = Array.isArray($json.sheetData) ? $json.sheetData : (Array.isArray($json.data) ? $json.data : (Array.isArray($json) ? $json : []));\n                            return data.length > 0 && typeof data[0] === 'object' ? Object.keys(data[0]).length : 0;\n                        })()\n                    }}\n                </div>\n                <div class=\"card-label\">Data Fields</div>\n            </div>\n            <div class=\"card\">\n                <div class=\"card-value\">{{ new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }}</div>\n                <div class=\"card-label\">Report Date</div>\n            </div>\n        </div>\n        \n        <!-- Data Section -->\n        <div class=\"data-section\">\n            <h2 class=\"section-title\">Data Records</h2>\n            \n            {{\n                (function() {\n                    // Try to find the data array in different possible locations\n                    let data = [];\n                    \n                    if (Array.isArray($json.sheetData)) {\n                        data = $json.sheetData;\n                    } else if (Array.isArray($json.data)) {\n                        data = $json.data;\n                    } else if (Array.isArray($json)) {\n                        data = $json;\n                    } else if (typeof $json === 'object' && $json !== null) {\n                        // If it's a single object, wrap it in an array\n                        data = [$json];\n                    }\n                    \n                    // Generate the table or no-data message\n                    if (data.length > 0 && typeof data[0] === 'object') {\n                        let headers = Object.keys(data[0]);\n                        let html = '<table class=\"data-table\"><thead><tr>';\n                        \n                        // Generate headers\n                        headers.forEach(function(header) {\n                            let displayHeader = header.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim();\n                            html += '<th>' + displayHeader + '</th>';\n                        });\n                        html += '</tr></thead><tbody>';\n                        \n                        // Generate rows\n                        data.forEach(function(row) {\n                            html += '<tr>';\n                            headers.forEach(function(header) {\n                                let value = row[header];\n                                // Handle different data types\n                                if (value === null || value === undefined) {\n                                    value = '-';\n                                } else if (typeof value === 'object') {\n                                    value = JSON.stringify(value);\n                                } else if (typeof value === 'boolean') {\n                                    value = value ? 'Yes' : 'No';\n                                }\n                                html += '<td>' + value + '</td>';\n                            });\n                            html += '</tr>';\n                        });\n                        \n                        html += '</tbody></table>';\n                        return html;\n                    } else {\n                        return '<div class=\"no-data\">No data available for this report. Please ensure data is properly connected to this node.</div>';\n                    }\n                })()\n            }}\n        </div>\n    </div>\n    \n    <div class=\"footer\">\n        <p><strong>This is an automatically generated report</strong></p>\n        <p>© {{ new Date().getFullYear() }} - Confidential Document</p>\n        <p>Report Generated by AI Assistant | Powered by n8n Workflow Automation</p>\n        <p style=\"font-size: 0.8em; margin-top: 10px;\">Timestamp: {{ new Date().toISOString() }}</p>\n    </div>\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        -64
+      ],
+      "id": "3768dc61-d4b3-4957-9ce5-469b7f555334",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "operation": "URL/HTML to PDF",
+        "convertType": "htmlToPDF",
+        "html": "={{ $json.html }}",
+        "advancedOptions": {}
+      },
+      "type": "n8n-nodes-pdfco.PDFco Api",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        -64
+      ],
+      "id": "b0462f48-e1af-4ed1-bfc6-1445fba0bc02",
+      "name": "PDFco Api",
+      "credentials": {
+        "pdfcoApi": {
+          "id": "6w5Umqrv89rjZ30c",
+          "name": "PDF.co account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "file": "={{ $json.url }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2192,
+        144
+      ],
+      "id": "e2096312-7960-4a55-bf2f-42a32aa74f88",
+      "name": "Send a document",
+      "webhookId": "b1f0c793-a323-42d9-be35-727209c10cfa",
+      "credentials": {
+        "telegramApi": {
+          "id": "qDEHZJOsS8hV52RK",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Merge').item.json.message }}\n{{ $json.body }}\n# AI Document Analysis Agent for n8n Workflow\n\n## Core Instructions\n\nYou are an intelligent document analysis AI agent integrated into an n8n workflow. Your primary function is to analyze data provided in the input field ({{ $json.body }}) and answer user questions based on that data. You should provide comprehensive, conversational responses without formal report formatting.\n\n## Primary Objectives\n\n1. **Input Data Analysis**: Thoroughly analyze ALL data provided in the input field {{ $json.body }}\n2. **Question Answering**: Provide detailed, accurate answers based on the input data\n3. **Conversational Response**: Use natural, professional language suitable for chat\n4. **Comprehensive Understanding**: Extract insights, patterns, and specific information from the data\n5. **Professional Communication**: Maintain business-appropriate tone while being conversational\n\n## Response Guidelines\n\n### Always Do:\n- ✅ Analyze ALL data from {{ $json.body }} thoroughly before responding\n- ✅ Answer questions directly and concisely based on the input data content\n- ✅ Keep responses short, focused, and straight to the point\n- ✅ Provide specific details, numbers, and facts from the data when relevant\n- ✅ Use professional, direct language\n- ✅ Focus only on what the user specifically asked\n- ✅ Include only the most relevant information\n- ✅ Keep responses under 100 words when possible\n\n### Never Do:\n- ❌ Give lengthy or verbose responses\n- ❌ Include unnecessary background information\n- ❌ Generate formal reports unless specifically requested\n- ❌ Use HTML formatting or special markup\n- ❌ Create bullet-pointed lists unless natural to the response\n- ❌ Mention technical limitations or workflow processes\n- ❌ Reference external sources - only use the provided input data\n- ❌ Ask for clarification about the data - work with what's provided\n- ❌ Give generic responses without analyzing the actual input data\n- ❌ Repeat information or provide excessive detail\n\n## Data Analysis Approach\n\n1. **First**: Carefully read and understand ALL content in {{ $json.body }}\n2. **Then**: Identify key information relevant to the user's question  \n3. **Finally**: Provide a complete answer based on your analysis\n\n## Response Style\n\n**Tone**: Professional and direct\n\n**Length**: Short and focused - typically 1-3 sentences for simple queries\n\n**Structure**: Concise paragraphs, get straight to the point\n\n**Content**: Answer only what was asked, include key numbers/facts from data\n\n## Example Interactions\n\n**User**: \"What are the main sales figures?\"\n\n**AI Response**: \"Total revenue is $2.4M with a 15.2% increase from the previous period. Digital channels contribute 68% of sales, with North America leading at 42% of total revenue.\"\n\n**User**: \"Tell me about customer data\"\n\n**AI Response**: \"Customer acquisition costs decreased 12% while retention improved. Premium customers show 31% higher lifetime values, particularly with subscription models.\"\n\n## Key Principles\n\n- **Data-Driven**: All responses must be based on the actual content in {{ $json.body }}\n- **Concise**: Keep answers short and focused on the specific question\n- **Direct**: Get straight to the point without unnecessary explanations\n- **Specific**: Include actual numbers, facts, and details from the data\n- **Professional**: Maintain business-appropriate language\n- **Focused**: Answer only what was asked, avoid extra information\n\n## Final Instructions\n\n- Always analyze the complete input data from {{ $json.body }} before responding\n- Keep responses SHORT, DIRECT, and PROFESSIONAL\n- Answer only what the user specifically asked\n- Include key numbers and facts from the data\n- Avoid lengthy explanations or background information\n- Aim for 1-3 sentences for simple questions\n- Focus on being concise and helpful based on the actual data provided",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        192
+      ],
+      "id": "5dd35f96-a7b4-4cdd-8af5-091eb041aa47",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        416
+      ],
+      "id": "e7a0ae11-4a1f-424c-83d4-720739b5e25f",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nS935zkV1z4TNsNd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "Convert from PDF",
+        "url": "https://drive.google.com/file/d/1XFePcWCANqQUH4hj6h4SVUFgJpMOfOjV/view?usp=sharing",
+        "advancedOptions": {}
+      },
+      "type": "n8n-nodes-pdfco.PDFco Api",
+      "typeVersion": 1,
+      "position": [
+        704,
+        288
+      ],
+      "id": "b7dfc3b8-d9a8-464f-83ff-0561c0201372",
+      "name": "PDFco Api1",
+      "credentials": {
+        "pdfcoApi": {
+          "id": "6w5Umqrv89rjZ30c",
+          "name": "PDF.co account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1696,
+        384
+      ],
+      "id": "00c09489-7617-46fc-9475-82ce558be8bc",
+      "name": "Send a text message1",
+      "webhookId": "79322537-f7f2-4dfb-9c89-d0c4d8ed44b5",
+      "credentials": {
+        "telegramApi": {
+          "id": "qDEHZJOsS8hV52RK",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Merge').item.json.message }}\n\nInput Data: {{ $json }}\n\nGenerate a comprehensive, detailed quality analysis report. Write in professional business language with clear insights and thorough analysis.\n\n<h1>COMPREHENSIVE QUALITY ANALYSIS REPORT</h1>\n<hr>\n\n<h2>Executive Summary</h2>\nProvide a 4-5 sentence overview covering the scope of analysis, key performance indicators, overall quality assessment, and primary business impact. Include total records analyzed and date range.\n\n<h2>Dataset Overview and Scope</h2>\nDetail the complete scope of data analyzed, including number of products tested, testing stations involved, date ranges, operators, and types of testing performed. Explain the significance of this dataset for quality assurance.\n\n<h2>Functional Performance Analysis</h2>\nConduct deep analysis of all functional parameters including boot times, response times, memory usage, processing speeds, accuracy rates, and system reliability metrics. Compare performance across different product categories and identify patterns, trends, and outliers. Discuss implications for operational efficiency.\n\n<h2>Electrical Systems Assessment</h2>\nThoroughly examine electrical parameters including voltage stability, current consumption, power efficiency, insulation resistance, and safety compliance. Analyze power factor performance, harmonic distortion levels, and signal quality metrics. Identify any electrical anomalies and their potential impact on product reliability.\n\n<h2>Physical and Environmental Compliance</h2>\nEvaluate physical testing results including temperature performance, humidity tolerance, vibration resistance, dimensional accuracy, and weight specifications. Assess environmental operating conditions and mechanical durability. Compare actual measurements against design specifications and industry standards.\n\n<h2>Quality Compliance and Standards Adherence</h2>\nReview compliance status across IPC, AEC-Q automotive standards, and IATF 16949 requirements. Analyze pass/fail rates for functional, electrical, and physical testing categories. Identify compliance gaps and assess regulatory risk levels.\n\n<h2>Product Line Performance Comparison</h2>\nCompare performance metrics across different product families (PLC vs HMI vs SCADA systems). Identify best-performing products and those requiring improvement. Analyze consistency within product lines and highlight significant variations.\n\n<h2>Risk Assessment and Quality Concerns</h2>\nIdentify potential quality risks, performance degradation patterns, and products showing warning signs. Assess impact severity and likelihood of issues affecting customer satisfaction or operational reliability.\n\n<h2>Operational Insights and Trends</h2>\nAnalyze testing efficiency, operator performance variations, and seasonal or temporal trends in quality metrics. Identify optimization opportunities in testing processes and quality control procedures.\n\n<h2>Strategic Recommendations</h2>\nProvide detailed, actionable recommendations prioritized by impact and implementation complexity. Include specific improvement targets, timeline suggestions, and resource requirements. Address both immediate corrective actions and long-term quality enhancement strategies.\n\n<h2>Conclusion and Next Steps</h2>\nSummarize key findings, overall quality assessment, and critical action items. Outline recommended follow-up activities and monitoring requirements.\n\n<hr>\n<i>Report generated on {{ new Date().toISOString() }}</i>\n\n## Writing Guidelines:\n- Use professional, technical language appropriate for quality engineers and management\n- Include specific numerical data and percentages throughout\n- Write detailed paragraphs (4-6 sentences each) for comprehensive coverage\n- Avoid bullet points or tables - use flowing narrative text\n- Connect findings to business impact and operational consequences\n- Maintain analytical depth while ensuring readability\n- Target 1000-1500 words for comprehensive coverage",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        -64
+      ],
+      "id": "133ee821-4d3e-4ee9-a30f-d12d9657de29",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        784,
+        160
+      ],
+      "id": "097d13d1-fc83-41ec-bc07-c20e1c215cd1",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nS935zkV1z4TNsNd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "==Message: {{ $('Merge').item.json.message }}\nCSV_Data: {{ $json.data || [$json] }}\nSystem_Description: {{ $('Extract from File1').item.json.data }}\nRows: {{ $json.data ? $json.data.length : 1 }}\n\n# Natural Vehicle System Control Assistant\n\nYou are a friendly vehicle system assistant. When users request changes to motors or sensors, respond naturally as if you've made the changes, using descriptive component names.\n\n## Available Components:\n### Motors (can be turned ON/OFF):\n- Main Drive Motor (y0) - Primary vehicle movement\n- Steering Motor (y1) - Directional control  \n- Brake Motor (y2) - Emergency and parking brakes\n- Transmission Motor (y3) - Gear shifting\n- Cooling Fan Motor (y4) - Engine temperature control\n- Fuel Pump Motor (y5) - Fuel delivery\n- Air Conditioning Motor (y6) - Climate control\n- Power Steering Motor (y7) - Assisted steering\n\n### Sensors (can be set to values or turned ON/OFF):\n- Speed Sensor (d0) - Vehicle velocity\n- Temperature Sensor (d1) - Engine temperature\n- Fuel Level Sensor (d2) - Fuel tank reading\n- Brake Pressure Sensor (d3) - Brake system pressure\n- Steering Angle Sensor (d4) - Wheel position\n- Throttle Position Sensor (d5) - Accelerator position\n- Oil Pressure Sensor (d6) - Engine oil pressure\n- Battery Voltage Sensor (d7) - Electrical system\n- Ambient Light Sensor (d8) - External lighting\n- Proximity Sensor (d9) - Obstacle detection\n\n## Response Examples:\n- \"I've turned on the main drive motor for you.\"\n- \"The cooling fan motor is now activated to help with temperature control.\"\n- \"I've set the fuel level sensor to 75% and turned on the fuel pump motor.\"\n- \"The brake motor has been turned off and the steering motor is now deactivated.\"\n- \"I've activated the proximity sensor and set the speed sensor to 60.\"\n\n## Instructions:\n1. Respond naturally and conversationally\n2. Use descriptive component names, not technical codes\n3. Confirm what you've done in past tense (\"I've turned on...\", \"The motor is now...\")\n4. Be specific about which components you're affecting\n5. For sensors, mention the value if a number is provided\n6. Keep responses friendly but concise\n7. Don't mention technical details or UPDATE commands\n8. Respond as if the action is already completed\n\nCurrent system status available in CSV_Data for reference.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        448
+      ],
+      "id": "43a32ad8-65d3-46e4-a36d-fa58f752aaf6",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        672
+      ],
+      "id": "b7b52d2e-4103-4ae8-9142-1947396752e6",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nS935zkV1z4TNsNd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "860d224e-e256-46bf-b289-354b8b0622e3",
+              "leftValue": "=",
+              "rightValue": "gmail",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        1232
+      ],
+      "id": "96146db8-c9a3-48df-a24b-b602ad5b7e88",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1456
+      ],
+      "id": "3ab7a463-dd74-450e-9a7a-07787e6505d4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nS935zkV1z4TNsNd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge').item.json.From }}",
+        "subject": "={{ $('Merge').item.json.Subject }}",
+        "message": "={{ $('AI Agent').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1984,
+        1136
+      ],
+      "id": "d58258db-d798-4af5-8b4e-4faaf4970d38",
+      "name": "Send a message",
+      "webhookId": "5d48a824-9199-4f97-83da-6b3a10326ede",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fVvjoj4cPwWlTfiJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "860d224e-e256-46bf-b289-354b8b0622e3",
+              "leftValue": "={{ $('Merge').item.json.triggerSource }}",
+              "rightValue": "gmail",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        288
+      ],
+      "id": "f1c8b547-6aad-4f2b-b41e-fe6f296742a7",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge').item.json.From }}",
+        "subject": "={{ $('Merge').item.json.Subject }}",
+        "message": "={{ $('AI Agent').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1696,
+        192
+      ],
+      "id": "84a052c4-e185-4b80-b67c-d38186d937c2",
+      "name": "Send a message1",
+      "webhookId": "5d48a824-9199-4f97-83da-6b3a10326ede",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fVvjoj4cPwWlTfiJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2496,
+        496
+      ],
+      "id": "ad413141-f4af-4ef3-b114-d04e7046ead9",
+      "name": "Send a text message2",
+      "webhookId": "f9cd75cd-82b4-4df2-81de-90c0d98e6a94",
+      "credentials": {
+        "telegramApi": {
+          "id": "qDEHZJOsS8hV52RK",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "860d224e-e256-46bf-b289-354b8b0622e3",
+              "leftValue": "={{ $('Merge').item.json.triggerSource }}",
+              "rightValue": "gmail",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2272,
+        400
+      ],
+      "id": "f69d7174-099b-4706-9e7a-5c612e3136ce",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge').item.json.From }}",
+        "subject": "={{ $('Merge').item.json.Subject }}",
+        "message": "={{ $('AI Agent').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2496,
+        304
+      ],
+      "id": "72474346-c17d-44cb-9df1-103be3a68e2a",
+      "name": "Send a message2",
+      "webhookId": "5d48a824-9199-4f97-83da-6b3a10326ede",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fVvjoj4cPwWlTfiJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "43527520-52c1-4de7-a862-a9d85fbe4c3d",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "REPORT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "report"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "aa2c1aee-3ca9-447e-bfe8-03c81c565a1d",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "ANALYSIS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "analysis"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b5c6edf9-e74e-4251-a95f-af283475195f",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "UPDATE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "update "
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3340bdaf-3b9c-4d98-8464-421af8cc9cae",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "SEARCH",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "search"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        432
+      ],
+      "id": "42cdc452-07b8-4899-b9c8-a96c17049100",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -368,
+        464
+      ],
+      "id": "c344bd45-61e7-4716-a059-b3f03ee48a90",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "860d224e-e256-46bf-b289-354b8b0622e3",
+              "leftValue": "={{ $('Merge').item.json.triggerSource }}",
+              "rightValue": "gmail",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1904,
+        -64
+      ],
+      "id": "55d0395b-e43a-4309-91b7-f3e9c924bdb2",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Merge').item.json.From }}",
+        "subject": "={{ $('Merge').item.json.Subject }}",
+        "message": "=here is your link to download the report\n{{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2192,
+        -160
+      ],
+      "id": "b97e38d3-a696-4605-90d1-aaf8f6ff7b7e",
+      "name": "Send a message3",
+      "webhookId": "5d48a824-9199-4f97-83da-6b3a10326ede",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fVvjoj4cPwWlTfiJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/csv-files/commands.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        704,
+        656
+      ],
+      "id": "d0c82c87-c9b3-496f-ace5-095bf4d03c3e",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        656
+      ],
+      "id": "381a4e5f-275a-42b2-bab2-d6cbffd6c16e",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2272,
+        832
+      ],
+      "id": "3d98a118-1774-46db-a7c1-ba8ddd9cf3f9",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "delimiter": ",",
+          "fileName": "commands.csv",
+          "headerRow": true
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2720,
+        848
+      ],
+      "id": "6a0d53c3-8821-4705-9893-37e43b11c3c5",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/data/csv-files/commands.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2944,
+        848
+      ],
+      "id": "497c0637-5ddc-4794-b44a-6cb5ad27df48",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/csv-files/description.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        576
+      ],
+      "id": "7286ff74-e524-4952-9d0b-b8e775e5e74a",
+      "name": "Read/Write Files from Disk2"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        576
+      ],
+      "id": "7c33e174-3473-43c1-841a-36acd6558507",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Debug node to see exactly what data is being read\nconst data = $json;\n\nconsole.log('=== CSV DATA DEBUG ===');\nconsole.log('Raw data type:', typeof data);\nconsole.log('Raw data:', JSON.stringify(data, null, 2));\n\nif (Array.isArray(data)) {\n  console.log('Data is array with length:', data.length);\n  console.log('First item:', data[0]);\n} else {\n  console.log('Data keys:', Object.keys(data));\n  console.log('Has y0?', data.hasOwnProperty('y0'));\n  console.log('Has data property?', data.hasOwnProperty('data'));\n}\n\n// Check if it's parsed CSV data\nif (data.data && Array.isArray(data.data)) {\n  console.log('Found data.data array with length:', data.data.length);\n  console.log('First row of data.data:', data.data[0]);\n}\n\nconsole.log('=== END DEBUG ===');\n\n// Pass through unchanged\nreturn { json: data };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1984,
+        912
+      ],
+      "id": "bb357d96-320f-48aa-9a24-3b26aab2903f",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Message: {{ $('Merge').item.json.message }}\nSubject: {{ $('Merge').item.json.Subject }}\nContext: {{ $('Merge').item.json.snippet }}\n\n# Context Classification AI Agent\n\nYou are a smart context classifier that analyzes user messages to determine their intent. Your job is to classify messages into one of four categories and respond with ONLY ONE WORD.\n\n## Classification Categories:\n\n### UPDATE\nMessages about controlling, changing, or modifying system components:\n- Keywords: \"turn on\", \"turn off\", \"start\", \"stop\", \"activate\", \"deactivate\", \"enable\", \"disable\", \"switch on\", \"switch off\"\n- Actions: \"set to\", \"change to\", \"adjust\", \"modify\", \"control\"\n- Components: mentions of motors, sensors, engine, brake, steering, fuel, temperature, etc.\n- Examples: \"turn on the engine\", \"set fuel to 75%\", \"stop the brake motor\", \"activate cooling\"\n\n### REPORT  \nMessages requesting formatted reports or comprehensive analysis:\n- Keywords: \"report\", \"generate report\", \"create report\", \"detailed report\", \"analysis report\"\n- Formal requests: \"prepare a report\", \"I need a report on\", \"generate analysis\"\n- Business context: mentions of executive summary, professional format, documentation\n- Examples: \"generate a report on sales data\", \"create analysis report\", \"prepare detailed report\"\n\n### ANALYSIS\nMessages asking for document analysis or data interpretation:\n- Keywords: \"analyze\", \"what does this mean\", \"explain\", \"interpret\", \"understand\"\n- Document context: \"analyze this document\", \"what's in this file\", \"explain the data\"\n- Questions about content: \"what are the findings\", \"summarize this\", \"break down\"\n- Examples: \"analyze this PDF\", \"what does the data show\", \"explain these results\"\n\n### SEARCH\nMessages looking for specific data, records, or information:\n- Keywords: \"find\", \"search\", \"look for\", \"show me\", \"get\", \"fetch\"\n- Data queries: \"find cars under\", \"search for\", \"show all\", \"get records\"\n- Specific requests: mentions of brands, models, prices, years, specifications\n- Examples: \"find Volvo cars\", \"search for cars under 4 crores\", \"show me all luxury vehicles\"\n\n## Response Rules:\n\n**CRITICAL: Respond with EXACTLY ONE WORD ONLY:**\n\n- If message is about controlling/changing systems → respond: **UPDATE**\n- If message requests a formal report → respond: **REPORT**  \n- If message asks to analyze documents/data → respond: **ANALYSIS**\n- If message searches for specific information → respond: **SEARCH**\n\n## Classification Priority (when multiple intents exist):\n1. UPDATE (highest priority - system control)\n2. REPORT (formal business documentation)\n3. ANALYSIS (document/data interpretation) \n4. SEARCH (information retrieval)\n\n## Examples:\n\nUser: \"Turn on the main drive motor\"\nResponse: **UPDATE**\n\nUser: \"Generate a comprehensive report on vehicle data\"\nResponse: **REPORT**\n\nUser: \"Analyze this PDF document for me\"\nResponse: **ANALYSIS**\n\nUser: \"Find all Ferrari cars in the database\"\nResponse: **SEARCH**\n\nUser: \"Set the fuel level to 80 percent\"\nResponse: **UPDATE**\n\nUser: \"What does this data show about sales performance?\"\nResponse: **ANALYSIS**\n\nUser: \"Create a detailed business report\"\nResponse: **REPORT**\n\nUser: \"Show me cars under 5 crores\"\nResponse: **SEARCH**\n\n## IMPORTANT REMINDERS:\n- Output ONLY the classification word (UPDATE/REPORT/ANALYSIS/SEARCH)\n- No explanations, no additional text\n- No punctuation or formatting\n- Single word response only\n- Case doesn't matter but be consistent",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        464
+      ],
+      "id": "caba071d-64ab-4c41-a45a-396440fb5228",
+      "name": "AI Agent4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        688
+      ],
+      "id": "c3dd12f0-ec2a-4c7e-b8ec-eaa2e4bda3c4",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nS935zkV1z4TNsNd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "={\n  \"name\": \"get_all_sheet_data\",\n  \"description\": \"Get all data from Google Sheets for intelligent searching and matching. This tool retrieves the complete dataset to enable keyword-based searches without requiring specific row numbers.\",\n  \"parameters\": {\n    \"include_headers\": {\n      \"type\": \"boolean\", \n      \"description\": \"Whether to include column headers in the response\",\n      \"default\": true\n    },\n    \"search_context\": {\n      \"type\": \"string\",\n      \"description\": \"Optional context about what type of data search will be performed (for optimization purposes)\",\n      \"default\": \"general_search\"\n    }\n  }\n}",
+        "documentId": {
+          "__rl": true,
+          "value": "1TVkv4pZLrzLcwHnU4OUDPFmMbiBboaLum6P0qJGxczI",
+          "mode": "list",
+          "cachedResultName": "d",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TVkv4pZLrzLcwHnU4OUDPFmMbiBboaLum6P0qJGxczI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 865197246,
+          "mode": "list",
+          "cachedResultName": "d",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TVkv4pZLrzLcwHnU4OUDPFmMbiBboaLum6P0qJGxczI/edit#gid=865197246"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1488,
+        1456
+      ],
+      "id": "be04e592-9029-4e45-8bcd-25d916508248",
+      "name": "Get row(s) in sheet in Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ilGF5IxRcZrEWNJN",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/csv-files/des2.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        704,
+        1232
+      ],
+      "id": "a98747ae-896a-4af6-9d48-314bc3f2b682",
+      "name": "Read/Write Files from Disk3"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        1232
+      ],
+      "id": "c4e0bf52-b492-49e4-8403-c8dea668a8dd",
+      "name": "Extract from File2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM quality_parameters ORDER BY test_timestamp DESC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        432,
+        -64
+      ],
+      "id": "ad8ae4e8-9ea8-4688-a015-711795f19fef",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "KIHB4yNuPOYubSnA",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "PDFco Api",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDFco Api": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDFco Api1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PDFco Api1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read/Write Files from Disk3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk2": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "AI Agent4": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk3": {
+      "main": [
+        [
+          {
+            "node": "Extract from File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d76ff60b-bdb2-4a52-a5f0-a80364ca3337",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "55bf794dbeb4377d1da0151fb6c1d4f43e1a40dce491021410e6a2e159cbe459"
+  },
+  "id": "MduxIcL9IbmUYNZN",
+  "tags": []
+}
